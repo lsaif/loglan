@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+# python loglan
+
+# Imports
+import geolog
+import numpy as np
+
+# Load data from geolog
+while geolog.gettable():
+    rhob = rhobed
+    rhob_mat = rhobed_mat
+    rhob_sh = rhobed_sh
+    rhob_dsh = rhobed_dsh
+    rhob_fl = rhobed_fl
+    
+    phi_shd = (rhob_dsh-rhob_sh)/(rhob_dsh-rhob_fl)
+    vol_sh = vsh*(1-(phi_shd-vol_cbw_sh))
+    phi_wsh = vol_cbw_sh
+   
+    phit = (rhob_mat - rhob)/(rhob_mat-rhob_fl)
+    phie = phit - (vol_sh * phi_wsh)
+    phiff = phit - (vsh*phi_shd)
+    vol_clybndwat = phit - phie
+    vol_capbndwat = phie - phiff
+    vol_boundwat = vol_clybndwat + vol_capbndwat
+    
+    #if (phie<=0.002):
+    #    vol_capbndwat = phit - vol_clybndwat
+    vol_capbndwat = np.where(phie<=0.002, phit - vol_clybndwat, vol_capbndwat)
+        
+    #if ((phie - vol_capbndwat <= 0.001)):
+    #    vol_capbndwat = phie
+    #    vol_boundwat = phit
+    vol_capbndwat = np.where(phie - vol_capbndwat <= 0.001,phie,vol_capbndwat) 
+    vol_boundwat = np.where(phie - vol_capbndwat <= 0.001,phit,vol_boundwat)       
+     
+    
+    #if ((vol_boundwat/phit) < swirr_min):
+    #    vol_capbndwat = np.random.normal((swirr_min * phit), 0.005)
+    #    if (vol_clybndwat > 0):
+    #        vol_capbndwat = vol_capbndwat - vol_clybndwat
+    vol_capbndwat = np.where((vol_boundwat/phit) < swirr_min, np.random.normal((swirr_min * phit), 0.005), vol_capbndwat)
+    vol_capbndwat = np.where((((vol_boundwat/phit) < swirr_min) & (vol_clybndwat > 0)), vol_capbndwat - vol_clybndwat, vol_capbndwat)
+        
+    vol_capbndwat = np.maximum(np.minimum(vol_capbndwat, phit), 0)
+
+    #if ((phit<0.05) & (vol_clybndwat<0.05)):
+    #    vol_capbndwat = phit - vol_clybndwat
+    
+    vol_capbndwat = np.where(((phit<0.05) & (vol_clybndwat<0.05)),phit - vol_clybndwat,vol_capbndwat) 
+        
+    swirr = vol_boundwat/phit
+    
+    # Store data into geolog
+    geolog.puttable()
+
