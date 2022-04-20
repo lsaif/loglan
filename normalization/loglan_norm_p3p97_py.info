@@ -1,0 +1,13 @@
+# spec : 
+LANGUAGE = PYTHON
+DESCRIPTION_DETAIL = "Normalized GR using standard deviation and mean"
+MODE:  ARG:         VAR:         TYPE:     REPEAT: DEFAULT: VALIDATION: LOCATION: UNIT: VISIBLE: TAB_LABEL: COMMENT=
+#====  ====         ====         =====     ======= ======== =========== ========= ===== ======== ========== ========               
+INPUT  FILE_IN      file_in      FILE      ""      ""       ""          ""        ""    TRUE     ""         "Input table (pipe)."
+INPUT  FILE_OUT     file_out     FILE      ""      ""       ""          ""        ""    TRUE     ""         "Output table (pipe)."
+INPUT  PCT_LOW_NEW  pct_low_new  NAME_REAL ""      ""       ""          CONSTANT  GAPI  TRUE     ""         "New desired PCT_LOW"
+INPUT  PCT_HIGH_NEW pct_high_new NAME_REAL ""      ""       ""          CONSTANT  GAPI  TRUE     ""         "New desired PCT_HIGH"
+OUTPUT GR_P3        gr_p3        NAME_REAL ""      GR_P3    ""          LOG       GAPI  TRUE     ""         "PCT_LOW each well"
+OUTPUT GR_P97       gr_p97       NAME_REAL ""      GR_P97   ""          LOG       GAPI  TRUE     ""         "PCT_HIGH each well"
+INPUT  GR           gr           NAME_REAL ""      GR       ""          LOG       GAPI  TRUE     ""         "Gamma Ray"
+OUTPUT GRN          grn          NAME_REAL ""      GRN      ""          LOG       GAPI  TRUE     ""         "Normalized Gamma Ray"
